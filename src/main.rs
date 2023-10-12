@@ -2,6 +2,7 @@ mod offering;
 
 use reqwest;
 use std::error::Error;
+use offering::OfferingsResponse;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -9,7 +10,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let response = reqwest::get(url).await?.text().await?;
 
-    println!("Received response:\n{}", response);
+    let offerings: OfferingsResponse = serde_json::from_str(&response)?;
+
+    println!("{:?}", offerings); // Use Debug print for the deserialized response
 
     Ok(())
 }
