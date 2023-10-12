@@ -1,8 +1,9 @@
+mod devtools;
 mod offering;
 
+use offering::OfferingsResponse;
 use reqwest;
 use std::error::Error;
-use offering::OfferingsResponse;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -12,7 +13,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let offerings: OfferingsResponse = serde_json::from_str(&response)?;
 
-    println!("{:?}", offerings); // Use Debug print for the deserialized response
+    // println!("{:?}", offerings); // Use Debug print for the deserialized response
+
+    devtools::create_rfq(offerings.data.first().unwrap()).await;
 
     Ok(())
 }

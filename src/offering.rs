@@ -1,115 +1,115 @@
-use serde_derive::{Serialize, Deserialize};
+use serde_derive::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct OfferingsResponse {
-    data: Vec<Offering>
+    pub data: Vec<Offering>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Offering {
-    metadata: Metadata,
-    data: OfferingData
+    pub metadata: Metadata,
+    pub data: OfferingData,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Metadata {
-    from: String,
-    kind: String,
-    id: String,
+    pub from: String,
+    pub kind: String,
+    pub id: String,
     #[serde(rename = "createdAt")]
-    created_at: String,
+    pub created_at: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct OfferingData {
-    description: String,
+    pub description: String,
     #[serde(rename = "payinCurrency")]
-    payin_currency: Currency,
+    pub payin_currency: Currency,
     #[serde(rename = "payoutCurrency")]
-    payout_currency: PayoutCurrency,
+    pub payout_currency: PayoutCurrency,
     #[serde(rename = "payoutUnitsPerPayinUnit")]
-    payout_units_per_payin_unit: String,
+    pub payout_units_per_payin_unit: String,
     #[serde(rename = "payinMethods")]
-    payin_methods: Vec<PaymentMethod>,
+    pub payin_methods: Vec<PaymentMethod>,
     #[serde(rename = "payoutMethods")]
-    payout_methods: Vec<PaymentMethod>,
+    pub payout_methods: Vec<PaymentMethod>,
     #[serde(rename = "requiredClaims")]
-    required_claims: RequiredClaims,
+    pub required_claims: RequiredClaims,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Currency {
     #[serde(rename = "currencyCode")]
-    currency_code: String,
+    pub currency_code: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PayoutCurrency {
     #[serde(rename = "currencyCode")]
-    currency_code: String,
+    pub currency_code: String,
     #[serde(rename = "maxSubunits")]
-    max_subunits: String,
+    pub max_subunits: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PaymentMethod {
-    kind: String,
+    pub kind: String,
     #[serde(rename = "requiredPaymentDetails")]
-    required_payment_details: PaymentDetails,
+    pub required_payment_details: PaymentDetails,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PaymentDetails {
     #[serde(rename = "$schema")]
-    schema: String,
+    pub schema: String,
     #[serde(rename = "type")]
-    type_field: String,
-    properties: std::collections::HashMap<String, PropertyDetails>,
-    required: Vec<String>,
+    pub type_field: String,
+    pub properties: std::collections::HashMap<String, PropertyDetails>,
+    pub required: Vec<String>,
     #[serde(rename = "additionalProperties")]
-    additional_properties: bool,
+    pub additional_properties: bool,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PropertyDetails {
     #[serde(rename = "type")]
-    type_field: String,
-    description: String,
+    pub type_field: String,
+    pub description: String,
     #[serde(rename = "minLength")]
-    min_length: Option<u32>,
+    pub min_length: Option<u32>,
     #[serde(rename = "maxLength")]
-    max_length: Option<u32>,
-    pattern: Option<String>,
+    pub max_length: Option<u32>,
+    pub pattern: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct RequiredClaims {
-    id: String,
+    pub id: String,
     #[serde(rename = "input_descriptors")]
-    input_descriptors: Vec<InputDescriptor>,
+    pub input_descriptors: Vec<InputDescriptor>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct InputDescriptor {
-    id: String,
-    constraints: Constraint,
+    pub id: String,
+    pub constraints: Constraint,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Constraint {
-    fields: Vec<FieldConstraint>,
+    pub fields: Vec<FieldConstraint>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct FieldConstraint {
-    path: Vec<String>,
-    filter: Filter,
+    pub path: Vec<String>,
+    pub filter: Filter,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Filter {
     #[serde(rename = "type")]
-    type_field: String,
+    pub type_field: String,
     #[serde(rename = "const")]
-    const_field: String,
+    pub const_field: String,
 }
