@@ -3472,7 +3472,6 @@ dependencies = [
  "chrono",
  "ciborium",
  "didkit",
- "lazy_static",
  "reqwest",
  "serde",
  "serde_derive",

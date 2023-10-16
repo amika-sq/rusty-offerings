@@ -6,18 +6,6 @@ use sha2::{Digest, Sha256};
 use ssi_jwk::{Params, JWK};
 use ssi_jws::{encode_sign_custom_header, Header};
 
-use lazy_static::lazy_static;
-use std::collections::HashMap;
-
-lazy_static! {
-    static ref CRV_TO_ALG: HashMap<&'static str, &'static str> = {
-        let mut map = HashMap::new();
-        map.insert("Ed25519", "EdDSA");
-        map.insert("secp256k1", "ES256K");
-        map
-    };
-}
-
 pub struct Crypto;
 
 impl Crypto {
