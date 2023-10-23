@@ -1,77 +1,69 @@
+pub mod rfq;
+
+use crate::message::rfq::RfqData;
+
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
-
-// RFQ SPECIFIC STUFF
+use type_safe_id::{DynamicType, TypeSafeId};
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct RfqData {
-    pub offering_id: String,
-    pub payin_method: PaymentMethod,
-    pub payout_method: PaymentMethod,
-    pub payin_subunits: String,
-    pub claims: Vec<String>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct PaymentMethod {
-    pub kind: String,
-    pub payment_details: HashMap<String, String>,
-}
-
-// THIS IS ACTUALLY MESSAGE
-
-pub trait ResourceDataType {
-    fn kind() -> String;
-}
-
-#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Metadata {
-    /// The message ID
     id: String,
-    /// The message kind
     kind: String,
-    /// The exchange ID
     exchange_id: String,
-    /// The sender's DID
     from: String,
-    /// The recipient's DID
     to: String,
-    /// Message creation time, expressed as ISO8601
     created_at: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 #[serde(untagged)]
 pub enum Data {
     Rfq(RfqData),
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct SignedMessage {
+    #[serde(flatten)]
+    message: Message,
+    signature: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Message {
-    pub metadata: Metadata,
-    pub data: Data,
-    pub signature: String,
+    metadata: Metadata,
+    data: Data,
 }
 
 impl Message {
+    // Custom Constructor
     pub fn new(data: Data) -> Self {
+        // Determine `kind` of message
         let kind = match &data {
             Data::Rfq(_) => "rfq".to_string(),
         };
 
+        // Generate a TypeID, using `kind` as the prefix
+        let dynamic_type = DynamicType::new(&kind).unwrap();
+        let id = TypeSafeId::new_with_type(dynamic_type).to_string();
+
         let metadata = Metadata {
-            id: "farts".to_string(),
+            id: id.clone(),
             kind,
-            exchange_id: "farts".to_string(),
-            from: "farts".to_string(),
-            to: "farts".to_string(),
+            exchange_id: id.clone(), // TODO : This is NOT the id in the case of non-rfq messages
+            from: "alice".to_string(),
+            to: "bob".to_string(),
             created_at: Utc::now().to_rfc3339(),
         };
 
-        Message {
-            metadata,
-            data,
-            signature: "farts".to_string(),
+        Message { metadata, data }
+    }
+
+    pub fn sign(self) -> SignedMessage {
+        SignedMessage {
+            message: self,
+            signature: "123".to_string(),
         }
     }
 }

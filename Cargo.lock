@@ -3481,6 +3481,7 @@ dependencies = [
  "ssi-jws",
  "ssi-vc",
  "tokio",
+ "type-safe-id",
 ]
 
 [[package]]
@@ -4566,6 +4567,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "type-safe-id"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bb1211a53644c6a5ae26c45bdd520d1533b07dab50dc6af1a15063772f9061ad"
+dependencies = [
+ "arrayvec 0.7.4",
+ "rand",
+ "thiserror",
+ "uuid",
+]
+
+[[package]]
 name = "typenum"
 version = "1.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4638,6 +4651,12 @@ name = "utf8-decode"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ca61eb27fa339aa08826a29f03e87b99b4d8f0fc2255306fd266bb1b6a9de498"
+
+[[package]]
+name = "uuid"
+version = "1.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "88ad59a7560b41a70d191093a945f0b87bc1deeda46fb237479708a1d6b6cdfc"
 
 [[package]]
 name = "value-bag"
