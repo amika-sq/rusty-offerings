@@ -2,8 +2,11 @@ pub mod rfq;
 
 use crate::message::rfq::RfqData;
 
+use crate::crypto::Crypto;
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
+use serde_json::json;
+use ssi_jwk::JWK;
 use type_safe_id::{DynamicType, TypeSafeId};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -27,7 +30,7 @@ pub enum Data {
 pub struct SignedMessage {
     #[serde(flatten)]
     message: Message,
-    signature: String,
+    pub signature: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -60,10 +63,20 @@ impl Message {
         Message { metadata, data }
     }
 
-    pub fn sign(self) -> SignedMessage {
+    pub fn sign(self: Message, jwk: JWK, kid: String) -> SignedMessage {
+        let payload = json!({
+            "metadata": self.metadata,
+            "data": self.data,
+        });
+        println!("payload: {}", payload);
+        let payload_digest = Crypto::digest(payload).expect("Error computing digest.");
+
+        let signature =
+            Crypto::sign(&payload_digest, jwk, kid, true).expect("Error creating signature.");
+
         SignedMessage {
             message: self,
-            signature: "123".to_string(),
+            signature,
         }
     }
 }
