@@ -14,12 +14,14 @@ use ssi_jwk::{Algorithm, Base64urlUInt, ECParams, OctetParams, JWK};
 use crate::message::rfq::{PaymentMethod, RfqData};
 use crate::message::{Data, Message, SignedMessage};
 use crate::offering::Offering;
+use serde_json;
 use std::collections::HashMap;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let offerings = get_offerings().await?;
-    let rfq_message = create_hardcoded_rfq_message()?;
+    let first_offering = offerings.first().expect("Panic, no offerings");
+    let rfq_message = create_hardcoded_rfq_message(first_offering)?;
     Ok(())
 }
 
@@ -30,7 +32,7 @@ async fn get_offerings() -> Result<Vec<Offering>, Box<dyn Error>> {
 
     Ok(offerings.data)
 }
-fn create_hardcoded_rfq_message() -> Result<SignedMessage, Box<dyn Error>> {
+fn create_hardcoded_rfq_message(offering: &Offering) -> Result<SignedMessage, Box<dyn Error>> {
     let jwk_json_str = r#"
         {"d":"kPKqPIB5Nkv-gEpUr-9Ayqm5DFgGmX02WOdpleBFTME","alg":"EdDSA","crv":"Ed25519","kty":"OKP","ext":"true","key_ops":["sign"],"x":"lWEi7j72-LM89wIcNrnLhlwHl_a69okubkhjEEVdRlw"}    
     "#;
@@ -43,7 +45,7 @@ fn create_hardcoded_rfq_message() -> Result<SignedMessage, Box<dyn Error>> {
             kind: "DEBIT".to_string(),
             payment_details: HashMap::from([
                 ("cardNumber".to_string(), "1234567890123456".to_string()),
-                ("expiryDate".to_string(), "12/22".to_string()),
+                ("expiryDate".to_string(), "12/24".to_string()),
                 (
                     "cardHolderName".to_string(),
                     "Ephraim Bartholomew Winthrop".to_string(),
@@ -62,8 +64,17 @@ fn create_hardcoded_rfq_message() -> Result<SignedMessage, Box<dyn Error>> {
         claims: vec!["claim1".to_string()],
     };
 
-    let rfq_message = Message::new(Data::Rfq(rfq_data));
+    let rfq_message = Message::new(
+        &"did:key:z6MkpWNhaSbkUS1UJ9DuuRPzPzMHAE69Shm5YzAdb9kcYKDu".to_string(),
+        &offering.metadata.from,
+        Data::Rfq(rfq_data),
+    );
     let signed_rfq_message = rfq_message.sign(jwk, kid);
+
+    println!(
+        "Signed RFQ Message: {}",
+        serde_json::to_string_pretty(&signed_rfq_message)?
+    );
 
     Ok(signed_rfq_message)
 }

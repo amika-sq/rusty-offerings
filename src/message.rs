@@ -41,7 +41,7 @@ pub struct Message {
 
 impl Message {
     // Custom Constructor
-    pub fn new(data: Data) -> Self {
+    pub fn new(from: &String, to: &String, data: Data) -> Self {
         // Determine `kind` of message
         let kind = match &data {
             Data::Rfq(_) => "rfq".to_string(),
@@ -55,8 +55,8 @@ impl Message {
             id: id.clone(),
             kind,
             exchange_id: id.clone(), // TODO : This is NOT the id in the case of non-rfq messages
-            from: "alice".to_string(),
-            to: "bob".to_string(),
+            from: from.clone(),
+            to: to.clone(),
             created_at: Utc::now().to_rfc3339(),
         };
 
