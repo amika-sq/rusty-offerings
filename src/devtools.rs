@@ -1,31 +1,31 @@
+use crate::message::rfq::{PaymentMethod, RfqData};
+use crate::message::{Data, Message, SignedMessage};
 use crate::offering::Offering;
 
+use didkit::{DIDCreate, Error as DidKitError, ResolutionInputMetadata, Source, DID_METHODS};
 use serde_derive::{Deserialize, Serialize};
+use ssi_jwk::JWK;
 use ssi_vc::Credential;
 use std::collections::HashMap;
 
-use crate::message::rfq::{PaymentMethod, RfqData};
-use crate::message::{Data, Message, SignedMessage};
-use didkit::{DIDCreate, Error as DidKitError, ResolutionInputMetadata, Source, DID_METHODS, JWK};
-
-#[allow(unused)]
 pub async fn create_rfq(offering: &Offering) -> SignedMessage {
     let did_key_method = DID_METHODS
-        .get("key") // TODO: This is gross, can I use the constant somehow?
+        .get("key")
         .ok_or(DidKitError::UnknownDIDMethod)
         .unwrap();
     let did_key_resolver = did_key_method.to_resolver();
 
-    let issuer_key = JWK::generate_secp256k1().unwrap();
-    let issuer_did = did_key_method.generate(&Source::Key(&issuer_key)).unwrap();
-
-    let subject_key = JWK::generate_secp256k1().unwrap();
-    let subject_did = did_key_method.generate(&Source::Key(&issuer_key)).unwrap();
+    let jwk_json_str = r#"
+        {"d":"kPKqPIB5Nkv-gEpUr-9Ayqm5DFgGmX02WOdpleBFTME","alg":"EdDSA","crv":"Ed25519","kty":"OKP","ext":"true","key_ops":["sign"],"x":"lWEi7j72-LM89wIcNrnLhlwHl_a69okubkhjEEVdRlw"}    
+    "#;
+    let jwk: JWK = serde_json::from_str(jwk_json_str).expect("Couldn't parse jwk");
+    let did = "did:key:z6MkpWNhaSbkUS1UJ9DuuRPzPzMHAE69Shm5YzAdb9kcYKDu".to_string();
+    let kid = "did:key:z6MkpWNhaSbkUS1UJ9DuuRPzPzMHAE69Shm5YzAdb9kcYKDu#z6MkpWNhaSbkUS1UJ9DuuRPzPzMHAE69Shm5YzAdb9kcYKDu".to_string();
 
     let vc_str = format!(
         r###"{{
             "@context": "https://www.w3.org/2018/credentials/v1",
-            "id": "http://example.org/credentials/3731",
+            "id": "THIS IS MY ID AND IT'S UNIQUE LIKE A SNOWFLAKE",
             "type": ["VerifiableCredential", "YoloCredential"],
             "issuer": "{}",
             "issuanceDate": "2020-08-19T21:41:50Z",
@@ -33,7 +33,7 @@ pub async fn create_rfq(offering: &Offering) -> SignedMessage {
                 "id": "{}"
             }}
         }}"###,
-        issuer_did, subject_did
+        did, did
     );
 
     let vc = Credential::from_json_unsigned(&vc_str).unwrap();
@@ -41,7 +41,7 @@ pub async fn create_rfq(offering: &Offering) -> SignedMessage {
     proof_options.checks = None;
     proof_options.created = None;
     let jwt_string = vc
-        .generate_jwt(Some(&issuer_key), &proof_options, did_key_resolver)
+        .generate_jwt(Some(&jwk), &proof_options, did_key_resolver)
         .await
         .unwrap();
 
@@ -76,8 +76,8 @@ pub async fn create_rfq(offering: &Offering) -> SignedMessage {
         claims: vec![jwt_string],
     };
 
-    let rfq_message = Message::new(&subject_did, &offering.metadata.from, Data::Rfq(rfq_data));
-    let signed_rfq_message = rfq_message.sign(subject_key, "lkwjelkj".to_string());
+    let rfq_message = Message::new(&did, &offering.metadata.from, Data::Rfq(rfq_data));
+    let signed_rfq_message = rfq_message.sign(jwk, kid);
 
     signed_rfq_message
 }

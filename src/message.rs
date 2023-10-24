@@ -12,12 +12,12 @@ use type_safe_id::{DynamicType, TypeSafeId};
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Metadata {
-    id: String,
-    kind: String,
-    exchange_id: String,
-    from: String,
-    to: String,
-    created_at: String,
+    pub id: String,
+    pub kind: String,
+    pub exchange_id: String,
+    pub from: String,
+    pub to: String,
+    pub created_at: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -29,14 +29,14 @@ pub enum Data {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct SignedMessage {
     #[serde(flatten)]
-    message: Message,
+    pub message: Message,
     pub signature: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Message {
-    metadata: Metadata,
-    data: Data,
+    pub metadata: Metadata,
+    pub data: Data,
 }
 
 impl Message {
