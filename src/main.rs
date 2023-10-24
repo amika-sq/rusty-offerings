@@ -13,14 +13,23 @@ use ssi_jwk::{Algorithm, Base64urlUInt, ECParams, OctetParams, JWK};
 
 use crate::message::rfq::{PaymentMethod, RfqData};
 use crate::message::{Data, Message, SignedMessage};
+use crate::offering::Offering;
 use std::collections::HashMap;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
+    let offerings = get_offerings().await?;
     let rfq_message = create_hardcoded_rfq_message()?;
     Ok(())
 }
 
+async fn get_offerings() -> Result<Vec<Offering>, Box<dyn Error>> {
+    let url = "http://localhost:9000/offerings";
+    let response = reqwest::get(url).await?.text().await?;
+    let offerings: OfferingsResponse = serde_json::from_str(&response)?;
+
+    Ok(offerings.data)
+}
 fn create_hardcoded_rfq_message() -> Result<SignedMessage, Box<dyn Error>> {
     let jwk_json_str = r#"
         {"d":"kPKqPIB5Nkv-gEpUr-9Ayqm5DFgGmX02WOdpleBFTME","alg":"EdDSA","crv":"Ed25519","kty":"OKP","ext":"true","key_ops":["sign"],"x":"lWEi7j72-LM89wIcNrnLhlwHl_a69okubkhjEEVdRlw"}    
@@ -55,8 +64,6 @@ fn create_hardcoded_rfq_message() -> Result<SignedMessage, Box<dyn Error>> {
 
     let rfq_message = Message::new(Data::Rfq(rfq_data));
     let signed_rfq_message = rfq_message.sign(jwk, kid);
-
-    println!("RFQ Message Signature: {}", signed_rfq_message.signature);
 
     Ok(signed_rfq_message)
 }
