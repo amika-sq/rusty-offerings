@@ -20,11 +20,18 @@ use type_safe_id::{DynamicType, TypeSafeId};
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MessageMetadata {
+    /// The message's ID
     pub id: String,
+    /// This defines the data property's type (e.g. rfq, quote etc.)
     pub kind: String,
+    /// ID for a "exchange" of messages between Alice <-> PFI.
+    /// Set by the first message in an exchange.
     pub exchange_id: String,
+    /// The sender's DID
     pub from: String,
+    /// The recipient's DID
     pub to: String,
+    /// ISO 8601
     pub created_at: String, // TODO: Change to chrono DateTime?
 }
 
@@ -41,13 +48,16 @@ pub enum MessageData {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct SignedMessage {
     #[serde(flatten)]
-    pub message: Message,
+    pub message: Message, // TODO:  Don't encapsulate, just re-define?
+    /// Signature that verifies the authenticity and integrity of the message
     pub signature: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Message {
+    /// An object containing fields about the message
     pub metadata: MessageMetadata,
+    /// The actual message content
     pub data: MessageData,
 }
 
