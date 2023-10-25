@@ -1,6 +1,5 @@
 use crate::message::rfq::{PaymentMethod, Rfq};
 use crate::message::{Message, MessageData, SignedMessage};
-use crate::offering::Offering;
 
 use didkit::{DIDCreate, Error as DidKitError, ResolutionInputMetadata, Source, DID_METHODS};
 use serde_derive::{Deserialize, Serialize};
@@ -8,7 +7,7 @@ use ssi_jwk::JWK;
 use ssi_vc::Credential;
 use std::collections::HashMap;
 
-pub async fn create_rfq(offering: &Offering) -> SignedMessage {
+pub async fn create_rfq(offering_id: String, from: String) -> SignedMessage {
     let did_key_method = DID_METHODS
         .get("key")
         .ok_or(DidKitError::UnknownDIDMethod)
@@ -46,7 +45,7 @@ pub async fn create_rfq(offering: &Offering) -> SignedMessage {
         .unwrap();
 
     let rfq_data = Rfq {
-        offering_id: offering.metadata.id.clone(),
+        offering_id,
         payin_method: PaymentMethod {
             kind: "DEBIT_CARD".to_string(),
             payment_details: [
@@ -76,7 +75,7 @@ pub async fn create_rfq(offering: &Offering) -> SignedMessage {
         claims: vec![jwt_string],
     };
 
-    let rfq_message = Message::new(&did, &offering.metadata.from, MessageData::Rfq(rfq_data));
+    let rfq_message = Message::new(&did, &from, MessageData::Rfq(rfq_data));
     let signed_rfq_message = rfq_message.sign(jwk, kid);
 
     signed_rfq_message

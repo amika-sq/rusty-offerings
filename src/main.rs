@@ -1,9 +1,8 @@
 mod crypto;
 mod devtools;
 mod message;
-mod offering;
+mod resource;
 
-use offering::OfferingsResponse;
 use reqwest;
 use std::error::Error;
 
@@ -14,7 +13,9 @@ use ssi_jwk::{Algorithm, Base64urlUInt, ECParams, OctetParams, JWK};
 use crate::devtools::create_rfq;
 use crate::message::rfq::{PaymentMethod, Rfq};
 use crate::message::{Message, MessageData, SignedMessage};
-use crate::offering::Offering;
+use crate::resource::offering::Offering;
+use crate::resource::Resource;
+use serde::{Deserialize, Serialize};
 use serde_json;
 use std::collections::HashMap;
 
@@ -45,10 +46,15 @@ async fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-async fn get_offerings() -> Result<Vec<Offering>, Box<dyn Error>> {
+async fn get_offerings() -> Result<Vec<Resource<Offering>>, Box<dyn Error>> {
     let url = "http://localhost:9000/offerings";
     let response = reqwest::get(url).await?.text().await?;
     let offerings: OfferingsResponse = serde_json::from_str(&response)?;
 
     Ok(offerings.data)
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct OfferingsResponse {
+    pub data: Vec<Resource<Offering>>,
 }
