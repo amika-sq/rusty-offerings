@@ -22,7 +22,7 @@ pub struct MessageMetadata {
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(untagged)]
-pub enum Data {
+pub enum MessageData {
     Rfq(RfqData),
 }
 
@@ -36,15 +36,15 @@ pub struct SignedMessage {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Message {
     pub metadata: MessageMetadata,
-    pub data: Data,
+    pub data: MessageData,
 }
 
 impl Message {
     // Custom Constructor
-    pub fn new(from: &String, to: &String, data: Data) -> Self {
+    pub fn new(from: &String, to: &String, data: MessageData) -> Self {
         // Determine `kind` of message
         let kind = match &data {
-            Data::Rfq(_) => "rfq".to_string(),
+            MessageData::Rfq(_) => "rfq".to_string(),
         };
 
         // Generate a TypeID, using `kind` as the prefix

@@ -13,7 +13,7 @@ use ssi_jwk::{Algorithm, Base64urlUInt, ECParams, OctetParams, JWK};
 
 use crate::devtools::create_rfq;
 use crate::message::rfq::{PaymentMethod, RfqData};
-use crate::message::{Data, Message, SignedMessage};
+use crate::message::{Message, MessageData, SignedMessage};
 use crate::offering::Offering;
 use serde_json;
 use std::collections::HashMap;

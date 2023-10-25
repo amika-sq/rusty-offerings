@@ -1,5 +1,5 @@
 use crate::message::rfq::{PaymentMethod, RfqData};
-use crate::message::{Data, Message, SignedMessage};
+use crate::message::{Message, MessageData, SignedMessage};
 use crate::offering::Offering;
 
 use didkit::{DIDCreate, Error as DidKitError, ResolutionInputMetadata, Source, DID_METHODS};
@@ -76,7 +76,7 @@ pub async fn create_rfq(offering: &Offering) -> SignedMessage {
         claims: vec![jwt_string],
     };
 
-    let rfq_message = Message::new(&did, &offering.metadata.from, Data::Rfq(rfq_data));
+    let rfq_message = Message::new(&did, &offering.metadata.from, MessageData::Rfq(rfq_data));
     let signed_rfq_message = rfq_message.sign(jwk, kid);
 
     signed_rfq_message
