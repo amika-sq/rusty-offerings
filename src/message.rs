@@ -1,5 +1,13 @@
+pub mod close;
+pub mod order;
+pub mod order_status;
+pub mod quote;
 pub mod rfq;
 
+use crate::message::close::CloseData;
+use crate::message::order::OrderData;
+use crate::message::order_status::OrderStatusData;
+use crate::message::quote::QuoteData;
 use crate::message::rfq::RfqData;
 
 use crate::crypto::Crypto;
@@ -17,12 +25,16 @@ pub struct MessageMetadata {
     pub exchange_id: String,
     pub from: String,
     pub to: String,
-    pub created_at: String,
+    pub created_at: String, // TODO: Change to chrono DateTime?
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(untagged)]
 pub enum MessageData {
+    Close(CloseData),
+    Order(OrderData),
+    OrderStatus(OrderStatusData),
+    Quote(QuoteData),
     Rfq(RfqData),
 }
 
@@ -44,6 +56,10 @@ impl Message {
     pub fn new(from: &String, to: &String, data: MessageData) -> Self {
         // Determine `kind` of message
         let kind = match &data {
+            MessageData::Close(_) => "close".to_string(),
+            MessageData::Order(_) => "order".to_string(),
+            MessageData::OrderStatus(_) => "orderstatus".to_string(),
+            MessageData::Quote(_) => "quote".to_string(),
             MessageData::Rfq(_) => "rfq".to_string(),
         };
 
