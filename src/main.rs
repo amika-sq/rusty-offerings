@@ -12,7 +12,7 @@ use serde_json::to_string_pretty;
 use ssi_jwk::{Algorithm, Base64urlUInt, ECParams, OctetParams, JWK};
 
 use crate::devtools::create_rfq;
-use crate::message::rfq::{PaymentMethod, RfqData};
+use crate::message::rfq::{PaymentMethod, Rfq};
 use crate::message::{Message, MessageData, SignedMessage};
 use crate::offering::Offering;
 use serde_json;

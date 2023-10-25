@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct RfqData {
+pub struct Rfq {
     /// Offering which Alice would like to get a quote for
     pub offering_id: String,
     /// Specify which payment method to send payin currency

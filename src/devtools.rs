@@ -1,4 +1,4 @@
-use crate::message::rfq::{PaymentMethod, RfqData};
+use crate::message::rfq::{PaymentMethod, Rfq};
 use crate::message::{Message, MessageData, SignedMessage};
 use crate::offering::Offering;
 
@@ -45,7 +45,7 @@ pub async fn create_rfq(offering: &Offering) -> SignedMessage {
         .await
         .unwrap();
 
-    let rfq_data = RfqData {
+    let rfq_data = Rfq {
         offering_id: offering.metadata.id.clone(),
         payin_method: PaymentMethod {
             kind: "DEBIT_CARD".to_string(),

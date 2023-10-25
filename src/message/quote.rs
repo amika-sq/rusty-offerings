@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct QuoteData {
+pub struct Quote {
     /// When this quote expires. Expressed as ISO8601
     pub expires_at: String, // TODO: Change to chrono datetime?
     /// The amount of payin currency that the PFI will receive

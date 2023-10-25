@@ -4,11 +4,11 @@ pub mod order_status;
 pub mod quote;
 pub mod rfq;
 
-use crate::message::close::CloseData;
-use crate::message::order::OrderData;
-use crate::message::order_status::OrderStatusData;
-use crate::message::quote::QuoteData;
-use crate::message::rfq::RfqData;
+use crate::message::close::Close;
+use crate::message::order::Order;
+use crate::message::order_status::OrderStatus;
+use crate::message::quote::Quote;
+use crate::message::rfq::Rfq;
 
 use crate::crypto::Crypto;
 use chrono::Utc;
@@ -38,11 +38,11 @@ pub struct MessageMetadata {
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(untagged)]
 pub enum MessageData {
-    Close(CloseData),
-    Order(OrderData),
-    OrderStatus(OrderStatusData),
-    Quote(QuoteData),
-    Rfq(RfqData),
+    Close(Close),
+    Order(Order),
+    OrderStatus(OrderStatus),
+    Quote(Quote),
+    Rfq(Rfq),
 }
 
 #[derive(Serialize, Deserialize, Debug)]
