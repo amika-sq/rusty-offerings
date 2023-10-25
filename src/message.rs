@@ -11,7 +11,7 @@ use type_safe_id::{DynamicType, TypeSafeId};
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Metadata {
+pub struct MessageMetadata {
     pub id: String,
     pub kind: String,
     pub exchange_id: String,
@@ -35,7 +35,7 @@ pub struct SignedMessage {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Message {
-    pub metadata: Metadata,
+    pub metadata: MessageMetadata,
     pub data: Data,
 }
 
@@ -51,7 +51,7 @@ impl Message {
         let dynamic_type = DynamicType::new(&kind).unwrap();
         let id = TypeSafeId::new_with_type(dynamic_type).to_string();
 
-        let metadata = Metadata {
+        let metadata = MessageMetadata {
             id: id.clone(),
             kind,
             exchange_id: id.clone(), // TODO : This is NOT the id in the case of non-rfq messages

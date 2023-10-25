@@ -52,5 +52,3 @@ async fn get_offerings() -> Result<Vec<Offering>, Box<dyn Error>> {
 
     Ok(offerings.data)
 }
-
-async fn get_exchanges(did: String) -> Result<Vec>
