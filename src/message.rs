@@ -71,7 +71,7 @@ impl Message {
             MessageData::OrderStatus(_) => "orderstatus".to_string(),
             MessageData::Quote(_) => "quote".to_string(),
             MessageData::Rfq(_) => "rfq".to_string(),
-        };
+        }
 
         // Generate a TypeID, using `kind` as the prefix
         let dynamic_type = DynamicType::new(&kind).unwrap();

@@ -13,12 +13,6 @@ pub struct Offering {
     pub required_claims: RequiredClaims,
 }
 
-impl Data<'_> for Offering {
-    fn kind() -> String {
-        "offering".to_string()
-    }
-}
-
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Currency {
